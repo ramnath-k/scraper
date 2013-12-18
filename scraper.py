@@ -4,11 +4,8 @@ import glob
 import json
 import csv
 
-dir_name = "/Users/ramnathkrishnamurthy/Dropbox/Pingpong/LDMI/Christmas Campaign/User List Htmls/Cognizant Christians/"
+dir_name = "/Users/ramnathkrishnamurthy/Dropbox/Pingpong/LDMI/Christmas Campaign/User List Htmls/Cognizant Christians Old/"
 output_dir_name = "/Users/ramnathkrishnamurthy/Dropbox/Pingpong/LDMI/Christmas Campaign/User List/"
-#for files in os.listdir(dir_name):
-#  if files.endswith(".htm"):
-#    print files
 for page in glob.glob(dir_name + "*.htm"):
   page_name = os.path.basename(page)
   print page_name
@@ -22,6 +19,7 @@ for page in glob.glob(dir_name + "*.htm"):
         data = tag.get("data-bt")
         data = json.loads(data)
         name_tag = tag.select("div._zs > a")[0]
-        print name_tag.string, data.get("id") 
-        csvwriter.writerow([name_tag.string, data.get("id")])
+        name = name_tag.contents[0]
+        print name, data.get("id") 
+        csvwriter.writerow([name, data.get("id")])
   
