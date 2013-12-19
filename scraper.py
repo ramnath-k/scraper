@@ -21,7 +21,8 @@ for page in glob.glob(input_dir_name + "*.htm*"):
     output_file_name = "female"
   else:
     output_file_name = "male"
-  soup = BeautifulSoup(open(page))
+  fp = open(page)
+  soup = BeautifulSoup(fp)
   container_tag = soup.select("div._4_yl > div")
   with open(output_dir_name + output_file_prefix + output_file_name + ".csv", "ab") as csvfile:
     csvwriter = csv.writer(csvfile, delimiter=",")
@@ -35,3 +36,25 @@ for page in glob.glob(input_dir_name + "*.htm*"):
         print name, fbuid
         csvwriter.writerow([name, fbuid])
   
+  if not container_tag:
+    fp = open(page)
+    content = fp.read()
+    search_term = "data-bt=\"&#123;&quot;id&quot;:"
+    splits = content.split(search_term)
+    splits = splits[1:]
+    with open(output_dir_name + output_file_prefix + output_file_name + ".csv", "ab") as csvfile:
+      csvwriter = csv.writer(csvfile, delimiter=",")
+      for split in splits:
+        pos = split.find(',')
+        fbuid = split[0:pos]
+        split1 = split.split('fref=browse_search\">')
+        if len(split1) > 1:
+          split1 = split1[1]
+          pos1 = split1.find('<span')
+          pos = split1.find('</a>')
+          if pos1 != -1 and pos1 < pos:
+            pos = pos1
+          name = split1[0:pos]
+          print name, fbuid
+          csvwriter.writerow([name, fbuid])
+
